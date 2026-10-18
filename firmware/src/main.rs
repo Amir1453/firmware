@@ -7,6 +7,7 @@ const _: &str = include_str!("../../linker.ld");
 #[unsafe(no_mangle)]
 extern "C" fn _start() {}
 
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {

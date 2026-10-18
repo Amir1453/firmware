@@ -1,5 +1,5 @@
 [toolchain]
 channel = "nightly-2026-10-16"
-components = ["rustfmt", "clippy"]
+components = ["rustfmt", "clippy", "llvm-tools", "rust-analyzer"]
 targets = ["thumbv7m-none-eabi"]
 profile = "minimal"

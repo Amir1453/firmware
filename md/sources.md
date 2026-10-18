@@ -1,0 +1,11 @@
+# Bibliography 
+- https://docs.rust-embedded.org/embedonomicon/memory-layout.html 
+- https://interrupt.memfault.com/blog/zero-to-main-1
+- https://interrupt.memfault.com/blog/how-to-write-linker-scripts-for-firmware
+- https://interrupt.memfault.com/blog/zero-to-main-rust-1
+- https://documentation-service.arm.com/static/5e8f1c777100066a414f770b
+- https://documentation-service.arm.com/static/5ea823e69931941038df1af5 
+- https://github.com/qemu/qemu/blob/master/hw/char/cmsdk-apb-uart.c
+- https://github.com/qemu/qemu/blob/master/hw/arm/mps2.c
+- https://www.qemu.org/docs/master/system/arm/mps2.html
+- https://github.com/calebhultmann/chemuRTOS/blob/main/board/mps2-an385/linker.ld

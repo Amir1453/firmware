@@ -4,4 +4,5 @@ bindeps = true
 [target.thumbv7m-none-eabi]
 rustflags = [
     "-C", "link-arg=-Tlinker.ld",
+    "-C", "link-arg=--image-base=0",
 ]

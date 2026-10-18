@@ -8,6 +8,7 @@ fn main() {
     let mut qemu = Command::new("qemu-system-arm");
     qemu.args(["-M", "mps2-an385"]);
     qemu.args(["-kernel", kernel]);
+    qemu.args(["-gdb", "tcp::3333"]);
     qemu.arg("-nographic");
 
     let mut child = qemu.spawn().expect("failed to start qemu");

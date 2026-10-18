@@ -4,7 +4,7 @@ Write a small bare-metal firmware for the Arm Cortex-M3 emulated by QEMU (qemu-s
 
 The firmware must:
 
--use your own linker script and startup code (vector table, reset handler);
+- use your own linker script and startup code (vector table, reset handler);
 - print its output through the board's UART (not semihosting);
 - determine whether it runs on an emulator or on real silicon, using at least two independent checks, and print the verdict and the raw values it observed.
 
@@ -12,7 +12,7 @@ The firmware must:
 
 Send us a zip containing:
 
--the sources;
+- the sources;
 - a Makefile (or CMake) where make run builds and runs everything;
 - the ELF;
 - a report of 2 pages at most that:

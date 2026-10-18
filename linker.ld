@@ -8,11 +8,14 @@ SECTIONS
 {
   .vector_table ORIGIN(CODE) :
   {
-    /* First entry: initial Stack Pointer value */
+    /* Register the stack pointer */
     LONG(ORIGIN(RAM) + LENGTH(RAM));
 
-    /* Second entry: reset vector */
+    /* Register the reset handler function */
     KEEP(*(.vector_table.reset_vector));
+
+    /* Register the Exception Handlers */
+    KEEP(*(.vector_table.exceptions));
   } > CODE
 
   .text :
@@ -27,13 +30,18 @@ SECTIONS
 
   .bss :
   {
+    _start_bss = .;
     *(.bss .bss.*);
+    _end_bss = .;
   } > RAM
 
+  _init_data = LOADADDR(.data);
   .data :
   {
+    _start_data = .;
     *(.data .data.*);
-  } > RAM
+    _end_data = .;
+  } > RAM AT > CODE
 
   /DISCARD/ :
   {

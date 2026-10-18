@@ -1,24 +1,53 @@
+/// Implemented w.r.t the following:
+/// Cortex-M System Design Kit, Revision: r1p0 Copyright © 2011, 2013 ARM. All rights reserved.
+use core::ptr::{read_volatile, write_volatile};
+
 const UART0: usize = 0x4000_4000;
 
+// CMSDK APB UART register addresses
+// Ideally should be u32 addr instead, and some nice wraps maybe.
+// Would be best to use bit_flags! here, but not crates.
+
+/// UART_DATA, Base offset 0x000.
+const UART_DATA: *mut u32 = UART0 as *mut u32;
+/// UART_STATE, Base offset 0x004.
+/// [0] -> TX buffer full.
+/// [1] -> RX buffer full.
+const UART_STATE: *const u32 = (UART0 + 0x04) as *const u32;
+/// UART_CTRL, Base offset 0x008.
+/// [0] -> TX Enable.
+/// [1] -> RX Enable.
+const UART_CTRL: *mut u32 = (UART0 + 0x08) as *mut u32;
+/// UART_BAUDDIV, Base offset 0x010.
+const UART_BAUDDIV: *mut u32 = (UART0 + 0x10) as *mut u32;
+
+// MPS2-AN385 25MhZ system/peripheral clock
+const PCLK_HZ: u32 = 25_000_000;
+const BAUD_RATE: u32 = 115_200;
+const BAUD_DIV: u32 = (PCLK_HZ + BAUD_RATE / 2) / BAUD_RATE;
+
+/// Initializes the UART communications.
 pub fn init() {
     unsafe {
-        // BAUDDIV: minimum valid divider for QEMU
-        core::ptr::write_volatile((UART0 + 0x10) as *mut u32, 16);
-
-        // CTRL: enable TX (bit 0)
-        core::ptr::write_volatile((UART0 + 0x08) as *mut u32, 1);
+        write_volatile(UART_CTRL, 0); // Writes 0, disable everything.
+        write_volatile(UART_BAUDDIV, BAUD_DIV); // Write the BAUD_DIV
+        write_volatile(UART_CTRL, 1); // Writes 1, enable only TX.
     }
 }
 
+/// Write one byte to the UART.
 pub fn putc(c: u8) {
     unsafe {
         // Wait until the transmit buffer is available.
-        while core::ptr::read_volatile((UART0 + 0x04) as *const u32) & 1 != 0 {}
+        while read_volatile(UART_STATE) & 1 != 0 {
+            core::hint::spin_loop();
+        }
 
-        core::ptr::write_volatile(UART0 as *mut u32, c as u32);
+        write_volatile(UART_DATA, c as u32);
     }
 }
 
+/// Wrapper around putc for printing.
 pub fn print(s: &str) {
     for c in s.as_bytes() {
         putc(*c);

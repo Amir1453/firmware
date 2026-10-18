@@ -7,4 +7,5 @@ name = "firmware-rs"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[build-dependencies]
+firmware = { path = "firmware", artifact = "bin", target = "thumbv7m-none-eabi" }

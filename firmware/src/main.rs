@@ -1,8 +1,11 @@
 #![no_std]
 #![no_main]
 
+/// Forces recompile if linker.ld is changed.
+const _: &str = include_str!("../../linker.ld");
+
 #[unsafe(no_mangle)]
-fn _start() {}
+extern "C" fn _start() {}
 
 #[panic_handler]
 fn panic(_info: &core::panic::PanicInfo) -> ! {

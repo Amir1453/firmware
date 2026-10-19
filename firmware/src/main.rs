@@ -90,7 +90,11 @@ pub extern "C" fn _start() -> ! {
 fn main() -> ! {
     uart::init();
 
-    uart::print("Hello Quarkslab!");
+    println!("Hello Quarkslab!");
+
+    em_check::check_pid();
+    em_check::check_cid();
+    em_check::check_apb_slave();
 
     loop {
         core::hint::spin_loop();

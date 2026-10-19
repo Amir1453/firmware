@@ -1,12 +1,13 @@
-/// Implemented w.r.t the following:
-/// Cortex-M System Design Kit, Revision: r1p0 Copyright © 2011, 2013 ARM. All rights reserved.
+// Implemented w.r.t the following:
+// Cortex-M System Design Kit, Revision: r1p0 Copyright © 2011, 2013 ARM. All rights reserved.
+
 use core::ptr::{read_volatile, write_volatile};
 
 const UART0: usize = 0x4000_4000;
 
 // CMSDK APB UART register addresses
 // Ideally should be u32 addr instead, and some nice wraps maybe.
-// Would be best to use bit_flags! here, but not crates.
+// Would be best to use bit_flags! here, but no crates.
 
 /// UART_DATA, Base offset 0x000.
 const UART_DATA: *mut u32 = UART0 as *mut u32;
@@ -47,9 +48,38 @@ pub fn putc(c: u8) {
     }
 }
 
-/// Wrapper around putc for printing.
-pub fn print(s: &str) {
-    for c in s.as_bytes() {
-        putc(*c);
+struct UartWriter;
+
+impl core::fmt::Write for UartWriter {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        for byte in s.bytes() {
+            putc(byte);
+        }
+
+        Ok(())
     }
+}
+
+pub fn print_fmt(args: core::fmt::Arguments<'_>) {
+    core::fmt::write(&mut UartWriter, args).ok();
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => {
+        $crate::uart::print_fmt(format_args!($($arg)*))
+    };
+}
+
+#[macro_export]
+macro_rules! println {
+    () => {
+        $crate::uart::print_fmt(format_args!("\r\n"))
+    };
+
+    ($($arg:tt)*) => {
+        $crate::uart::print_fmt(
+            format_args!("{}\r\n", format_args!($($arg)*))
+        )
+    };
 }

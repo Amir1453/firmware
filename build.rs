@@ -3,4 +3,6 @@ fn main() {
         .expect("Could not find firmware");
 
     println!("cargo:rustc-env=FIRMWARE_ELF={elf}");
+
+    println!("cargo:warning=Firmware is at {elf}");
 }

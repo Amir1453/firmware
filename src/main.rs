@@ -12,7 +12,9 @@ fn main() {
     let mut qemu = Command::new("qemu-system-arm");
     qemu.args(["-M", "mps2-an385"]);
     qemu.args(["-kernel", kernel]);
-    qemu.arg("-nographic");
+    qemu.args(["-display", "none"]);
+    qemu.args(["-monitor", "none"]);
+    qemu.args(["-serial", "file:qemu.log"]);
 
     if gdb {
         #[cfg(unix)]
@@ -35,6 +37,7 @@ fn main() {
             // GDB forwards interrupts through the debug connection.
             qemu.process_group(0);
         }
+
         qemu.args(["-gdb", "tcp:127.0.0.1:3333"]);
         qemu.arg("-S");
         qemu.stdin(Stdio::null());
@@ -46,14 +49,7 @@ fn main() {
         let status = Command::new("rust-gdb")
             .arg("-readnow")
             .arg(kernel)
-            .args([
-                "-ex",
-                "set tcp auto-retry on",
-                "-ex",
-                "set tcp connect-timeout 5",
-                "-ex",
-                "target remote 127.0.0.1:3333",
-            ])
+            .args(["-x", concat!(env!("CARGO_MANIFEST_DIR"), "/debug.gdb")])
             .status();
 
         let _ = child.kill();

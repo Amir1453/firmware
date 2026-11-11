@@ -65,6 +65,7 @@ pub fn print_fmt(args: core::fmt::Arguments<'_>) {
 }
 
 #[macro_export]
+#[collapse_debuginfo(yes)]
 macro_rules! print {
     ($($arg:tt)*) => {
         $crate::uart::print_fmt(format_args!($($arg)*))
@@ -72,6 +73,7 @@ macro_rules! print {
 }
 
 #[macro_export]
+#[collapse_debuginfo(yes)]
 macro_rules! println {
     () => {
         $crate::uart::print_fmt(format_args!("\r\n"))
